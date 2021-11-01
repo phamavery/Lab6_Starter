@@ -1,8 +1,9 @@
 class RecipeCard extends HTMLElement {
   constructor() {
     // Part 1 Expose - TODO
-
+    super();
     // You'll want to attach the shadow DOM here
+    this.shadow = this.attachShadow({mode: 'open'});
   }
 
   set data(data) {
@@ -84,10 +85,10 @@ class RecipeCard extends HTMLElement {
       }
     `;
     styleElem.innerHTML = styles;
-
+    this.shadow.appendChild(styleElem)
     // Here's the root element that you'll want to attach all of your other elements to
     const card = document.createElement('article');
-
+    this.shadow.appendChild(card);
     // Some functions that will be helpful here:
     //    document.createElement()
     //    document.querySelector()
@@ -98,8 +99,99 @@ class RecipeCard extends HTMLElement {
 
     // Make sure to attach your root element and styles to the shadow DOM you
     // created in the constructor()
+    //console.log(data);
 
+    
+    let graph = searchForKey(data, '@graph');
+    //console.log( graph);
+    let img;
+    let timeCook;
+    let ingrs;
+    let avgReview = searchForKey(data, 'ratingValue');
+    let totalReviews = searchForKey(data, 'ratingCount');
+    if(graph.length > 1) {
+      //console.log( graph);
+      for(let i = 0 ; i < graph.length ; ++i) {
+        if(graph[i]['@type'] === 'ImageObject') {
+          img = graph[i]['url'];
+        }
+        if(graph[i]['@type'] === 'Recipe') {
+          timeCook = convertTime(graph[i]['totalTime'])
+          ingrs = createIngredientList(graph[i]['recipeIngredient']);
+        }
+      }
+    }
+    else {
+      let temp = searchForKey(data, 'image');
+      img = temp["url"];
+      timeCook = convertTime(data['totalTime']);
+      ingrs = createIngredientList(data['recipeIngredient']);
+    }
     // Part 1 Expose - TODO
+    const recipeImg = document.createElement('img');
+    recipeImg.setAttribute('src', img);
+    card.appendChild(recipeImg);
+
+    const recipeTitle = document.createElement('p');
+    recipeTitle.classList.add('title');
+ 
+    const recipeLink = document.createElement('a');
+    recipeLink.innerText = searchForKey(data, 'headline');
+    recipeLink.setAttribute('href', getUrl(data));
+    recipeTitle.appendChild(recipeLink);
+    card.appendChild(recipeTitle);
+
+    const organization = document.createElement('p');
+    organization.classList.add('organization');
+    organization.innerText = searchForKey(data, 'name');
+    card.appendChild(organization);
+
+    
+    const rating = document.createElement('div');
+    rating.classList.add('rating');
+    const ratingReview = document.createElement('span');
+    const ratingImg = document.createElement('img');
+    const ratingTotal = document.createElement('span');
+    
+    if(avgReview > 0 && totalReviews > 0) {
+      ratingReview.innerText = avgReview;
+      ratingTotal.innerText = '(' + totalReviews + ')';
+
+      if(avgReview > 4) {
+        ratingImg.setAttribute('src', '/assets/images/icons/5-star.svg');
+      }
+      else if(avgReview > 3 && avgReview <= 4) {
+        ratingImg.setAttribute('src', '/assets/images/icons/4-star.svg');
+      }
+      else if(avgReview > 2 && avgReview <= 3) {
+        ratingImg.setAttribute('src', '/assets/images/icons/3-star.svg');
+      }
+      else if(avgReview > 1 && avgReview <= 2) {
+        ratingImg.setAttribute('src', '/assets/images/icons/2-star.svg');
+      }
+      else if(avgReview > 0 && avgReview <= 1){
+        ratingImg.setAttribute('src', '/assets/images/icons/1-star.svg');
+      }
+      else {
+        ratingImg.setAttribute('src', '/assets/images/icons/0-star.svg');
+      }
+    }
+    else {
+      ratingReview.innerText = 'No reviews';
+    }
+    rating.appendChild(ratingReview);
+    rating.appendChild(ratingImg);
+    rating.appendChild(ratingTotal);
+    card.appendChild(rating);
+
+    const time = document.createElement('time');
+    time.innerText = timeCook;
+    card.appendChild(time);
+
+    const ingredients = document.createElement('p');
+    ingredients.classList.add('ingredients');
+    ingredients.innerText = ingrs;
+    card.appendChild(ingredients);
   }
 }
 
