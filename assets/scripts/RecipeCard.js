@@ -158,22 +158,22 @@ class RecipeCard extends HTMLElement {
       ratingTotal.innerText = '(' + totalReviews + ')';
 
       if(avgReview > 4) {
-        ratingImg.setAttribute('src', '/assets/images/icons/5-star.svg');
+        ratingImg.setAttribute('src', 'assets/images/icons/5-star.svg');
       }
       else if(avgReview > 3 && avgReview <= 4) {
-        ratingImg.setAttribute('src', '/assets/images/icons/4-star.svg');
+        ratingImg.setAttribute('src', 'assets/images/icons/4-star.svg');
       }
       else if(avgReview > 2 && avgReview <= 3) {
-        ratingImg.setAttribute('src', '/assets/images/icons/3-star.svg');
+        ratingImg.setAttribute('src', 'assets/images/icons/3-star.svg');
       }
       else if(avgReview > 1 && avgReview <= 2) {
-        ratingImg.setAttribute('src', '/assets/images/icons/2-star.svg');
+        ratingImg.setAttribute('src', 'assets/images/icons/2-star.svg');
       }
       else if(avgReview > 0 && avgReview <= 1){
-        ratingImg.setAttribute('src', '/assets/images/icons/1-star.svg');
+        ratingImg.setAttribute('src', 'assets/images/icons/1-star.svg');
       }
       else {
-        ratingImg.setAttribute('src', '/assets/images/icons/0-star.svg');
+        ratingImg.setAttribute('src', 'assets/images/icons/0-star.svg');
       }
     }
     else {
